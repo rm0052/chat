@@ -10,26 +10,27 @@ from google import genai
 client = genai.Client(api_key="AIzaSyDFbnYmLQ1Q55jIYYmgQ83sxledB_MgTbw")
 
 # Streamlit App
-st.title("Chatbot for Stockdoc")
+st.title("Chatbot")
 
 # User Input: Question
 question = st.text_input("Enter your question")
 # Search Button
 if st.button("Get Answer"):
-    # SerpAPI search
-    params = {
-        "engine": "google",
-        "q": question,
-        "api_key": "1b6c33844c034b01987d113928c20e7dc77c934345ae673545479a7b77f8e7c1",
-        "num": 30,
-    }
-    search = GoogleSearch(params)
-    results = search.get_dict()
-    filtered_links = [
-        result["link"] for result in results.get("organic_results", [])
-    ]
-    # Extract articles
-    context = ""
+    with st.spinner("Getting articles..."):
+        # SerpAPI search
+        params = {
+            "engine": "google",
+            "q": question,
+            "api_key": "1b6c33844c034b01987d113928c20e7dc77c934345ae673545479a7b77f8e7c1",
+            "num": 30,
+        }
+        search = GoogleSearch(params)
+        results = search.get_dict()
+        filtered_links = [
+            result["link"] for result in results.get("organic_results", [])
+        ]
+        # Extract articles
+        context = ""
     for link in filtered_links:
         try:
             response = requests.get(link,timeout=10)
