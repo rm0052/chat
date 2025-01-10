@@ -16,7 +16,7 @@ st.title("Chatbot")
 question = st.text_input("Enter your question")
 # Search Button
 if st.button("Get Answer"):
-    with st.spinner("Finding articles..."):
+    with st.spinner("Running..."):
         # SerpAPI search
         params = {
             "engine": "google",
