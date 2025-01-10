@@ -31,32 +31,32 @@ if st.button("Get Answer"):
         ]
         # Extract articles
         context = ""
-    for link in filtered_links:
-        try:
-            response = requests.get(link,timeout=10)
-            soup = BeautifulSoup(response.text, "html.parser")
-            paragraphs = soup.find_all("p")
-            article_text = "\n".join(p.get_text(strip=True) for p in paragraphs)
-            context += " " + article_text[:500]
-        except:
-            continue
-        if len(context)>=2000:
-            break
-    # Generate Response with Gemini 1.5 Flash
-    prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
-    response = client.models.generate_content(
-        model="gemini-1.5-flash", contents=prompt
-    )
-    answer = response.text.strip()
-    # Follow-up Question
-    if answer.lower() == "yes":
-        final_prompt = f"Answer the question: {question}. Context: {context}"
-    else:
-        final_prompt = f"Answer the question using your own knowledge: {question}."
-
-    final_response = client.models.generate_content(
-        model="gemini-1.5-flash", contents=final_prompt
-    )
+        for link in filtered_links:
+            try:
+                response = requests.get(link,timeout=10)
+                soup = BeautifulSoup(response.text, "html.parser")
+                paragraphs = soup.find_all("p")
+                article_text = "\n".join(p.get_text(strip=True) for p in paragraphs)
+                context += " " + article_text[:500]
+            except:
+                continue
+            if len(context)>=2000:
+                break
+        # Generate Response with Gemini 1.5 Flash
+        prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
+        response = client.models.generate_content(
+            model="gemini-1.5-flash", contents=prompt
+        )
+        answer = response.text.strip()
+        # Follow-up Question
+        if answer.lower() == "yes":
+            final_prompt = f"Answer the question: {question}. Context: {context}"
+        else:
+            final_prompt = f"Answer the question using your own knowledge: {question}."
+    
+        final_response = client.models.generate_content(
+            model="gemini-1.5-flash", contents=final_prompt
+        )
     st.write(final_response.text)
 
 
