@@ -22,7 +22,7 @@ if st.button("Get Answer"):
             "engine": "google",
             "q": question,
             "api_key": "1b6c33844c034b01987d113928c20e7dc77c934345ae673545479a7b77f8e7c1",
-            "num": 15,
+            "num": 30,
         }
         search = GoogleSearch(params)
         results = search.get_dict()
@@ -57,6 +57,6 @@ if st.button("Get Answer"):
         final_response = client.models.generate_content(
             model="gemini-1.5-flash", contents=final_prompt
         )
-    st.write(final_response.text.replace("$","\$"))
+    st.write(final_response.text.replace("$","\$").replace("provided text',"available information")
 
 
