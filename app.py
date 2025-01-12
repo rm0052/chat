@@ -22,7 +22,7 @@ if st.button("Get Answer"):
             "engine": "google",
             "q": question,
             "api_key": "1b6c33844c034b01987d113928c20e7dc77c934345ae673545479a7b77f8e7c1",
-            "num": 30,
+            "num": 15,
         }
         search = GoogleSearch(params)
         results = search.get_dict()
