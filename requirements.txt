@@ -4,3 +4,4 @@ beautifulsoup4
 serpapi
 google-search-results
 google-genai
+httpx
