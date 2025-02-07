@@ -7,7 +7,7 @@ import os
 from google import genai
 import youtube
 # Initialize Google GenAI client
-client = genai.Client(api_key="AIzaSyDFbnYmLQ1Q55jIYYmgQ83sxledB_MgTbw")
+client = genai.Client(api_key="AIzaSyB_Z2Idk40FQtTxz-OC443vcGS5KHpI8Q4")
 
 # Streamlit App
 st.title("Chatbot")
