@@ -5,3 +5,4 @@ serpapi
 google-search-results
 google-genai
 httpx
+youtube-transcript-api
