@@ -40,7 +40,7 @@ if st.button("Get Answer") and question:
         for link in filtered_links:
             try:
                 if 'youtube.com' in link:
-                    context += " " + get_youtube_subtitles(video_url)[:500]
+                    context += " " + get_youtube_subtitles(link)[:500]
                 else:
                     response = requests.get(link, timeout=10)
                     soup = BeautifulSoup(response.text, "html.parser")
