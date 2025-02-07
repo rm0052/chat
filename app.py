@@ -55,7 +55,7 @@ if st.button("Get Answer") and question:
         # Generate Response with Gemini 1.5 Flash
         prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
         response = client.models.generate_content(
-            model="gemini-1.5-flash", contents=prompt
+            model="gemini-1.5-pro", contents=prompt
         )
         answer = response.text.strip()
 
