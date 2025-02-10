@@ -1,11 +1,11 @@
 import streamlit as st
-from google-search-results import GoogleSearch
+from serpapi import GoogleSearch
 from bs4 import BeautifulSoup
 import requests
 import time
 import os
 from google import genai
-import youtube
+# import youtube
 # Initialize Google GenAI client
 client = genai.Client(api_key="AIzaSyDFbnYmLQ1Q55jIYYmgQ83sxledB_MgTbw")
 
@@ -37,7 +37,7 @@ if st.button("Get Answer") and question:
         for link in filtered_links:
             try:
                 if 'youtube.com' in link:
-                    context += " " + get_youtube_subtitles(video_url)[:500]
+                    # context += " " + get_youtube_subtitles(video_url)[:500]
                 else:
                     response = requests.get(link, timeout=10)
                     soup = BeautifulSoup(response.text, "html.parser")
