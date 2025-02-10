@@ -1,11 +1,11 @@
 import streamlit as st
-from google_search_results import GoogleSearch
+from serpapi import GoogleSearch
 from bs4 import BeautifulSoup
 import requests
 import time
 import os
 from google import genai
-import youtube
+# import youtube
 # Initialize Google GenAI client
 client = genai.Client(api_key="AIzaSyDFbnYmLQ1Q55jIYYmgQ83sxledB_MgTbw")
 
