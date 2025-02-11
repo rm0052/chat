@@ -36,14 +36,11 @@ if st.button("Get Answer") and question:
         context = ""
         for link in filtered_links:
             try:
-                if 'youtube.com' in link:
-                    # context += " " + get_youtube_subtitles(video_url)[:500]
-                else:
-                    response = requests.get(link, timeout=10)
-                    soup = BeautifulSoup(response.text, "html.parser")
-                    paragraphs = soup.find_all("p")
-                    article_text = "\n".join(p.get_text(strip=True) for p in paragraphs)
-                    context += " " + article_text[:500]
+                response = requests.get(link, timeout=10)
+                soup = BeautifulSoup(response.text, "html.parser")
+                paragraphs = soup.find_all("p")
+                article_text = "\n".join(p.get_text(strip=True) for p in paragraphs)
+                context += " " + article_text[:500]
             except:
                 continue
             if len(context) >= 2000:
