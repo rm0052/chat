@@ -5,8 +5,20 @@ import requests
 import time
 import os
 from google import genai
+from youtube_transcript_api import YouTubeTranscriptApi 
 # import youtube
 # Initialize Google GenAI client
+def get_youtube_subtitles(video_url): 
+    """Fetch subtitles from a YouTube video.""" 
+    video_id = video_url.split("v=")[-1]  
+    # Extract video ID from URL 
+    try: 
+        transcript = YouTubeTranscriptApi.get_transcript(video_id) 
+        subtitles = "\n".join([entry["text"] for entry in transcript]) 
+        return subtitles 
+    except Exception as e: 
+        return f"Error: {e}"
+        
 client = genai.Client(api_key="AIzaSyDFbnYmLQ1Q55jIYYmgQ83sxledB_MgTbw")
 
 # Streamlit App
@@ -36,11 +48,14 @@ if st.button("Get Answer") and question:
         context = ""
         for link in filtered_links:
             try:
-                response = requests.get(link, timeout=10)
-                soup = BeautifulSoup(response.text, "html.parser")
-                paragraphs = soup.find_all("p")
-                article_text = "\n".join(p.get_text(strip=True) for p in paragraphs)
-                context += " " + article_text[:500]
+                if "youtube.com" in link:
+                    context += " " + get_youtube_subtitles(link)[:500]
+                else:
+                    response = requests.get(link, timeout=10)
+                    soup = BeautifulSoup(response.text, "html.parser")
+                    paragraphs = soup.find_all("p")
+                    article_text = "\n".join(p.get_text(strip=True) for p in paragraphs)
+                    context += " " + article_text[:500]
             except:
                 continue
             if len(context) >= 2000:
