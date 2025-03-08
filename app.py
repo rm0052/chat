@@ -52,7 +52,7 @@ def get_youtube_subtitles(video_url):
         return f"Error: {e}"
 
 # User Input
-question = st.chat_input("Enter your question", height=100)
+question = st.chat_input("Type your question and press Enter...")
 
 # Get Answer Button
 if question:
