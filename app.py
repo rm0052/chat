@@ -2,33 +2,59 @@ import streamlit as st
 from serpapi import GoogleSearch
 from bs4 import BeautifulSoup
 import requests
-import time
+import json
 import os
 from google import genai
 from youtube_transcript_api import YouTubeTranscriptApi 
-# import youtube
+
 # Initialize Google GenAI client
+client = genai.Client(api_key="AIzaSyDFbnYmLQ1Q55jIYYmgQ83sxledB_MgTbw")
+
+# Streamlit App
+st.title("Chatbot")
+
+# Chat history persistence
+CHAT_HISTORY_FILE = "chat_history.json"
+
+def load_chat_history():
+    if os.path.exists(CHAT_HISTORY_FILE):
+        with open(CHAT_HISTORY_FILE, "r") as f:
+            try:
+                return json.load(f)
+            except json.JSONDecodeError:
+                return []
+    return []
+
+def save_chat_history(chat_history):
+    with open(CHAT_HISTORY_FILE, "w") as f:
+        json.dump(chat_history, f)
+
+# Load chat history into session state
+if "chat_history" not in st.session_state:
+    st.session_state["chat_history"] = load_chat_history()
+
+# Display Chat History
+st.write("## Chat History")
+for q, r in st.session_state["chat_history"]:
+    with st.chat_message("user"):
+        st.write(q)
+    with st.chat_message("assistant"):
+        st.write(r)
+
 def get_youtube_subtitles(video_url): 
     """Fetch subtitles from a YouTube video.""" 
     video_id = video_url.split("v=")[-1]  
-    # Extract video ID from URL 
     try: 
         transcript = YouTubeTranscriptApi.get_transcript(video_id) 
         subtitles = "\n".join([entry["text"] for entry in transcript]) 
         return subtitles 
     except Exception as e: 
         return f"Error: {e}"
-        
-client = genai.Client(api_key="AIzaSyDFbnYmLQ1Q55jIYYmgQ83sxledB_MgTbw")
 
-# Streamlit App
-st.title("Chatbot")
+# User Input
+question = st.text_area("Enter your question", height=100)
 
-
-# User Input: Question
-question = st.text_input("Enter your question")
-
-# Search Button
+# Get Answer Button
 if st.button("Get Answer") and question:
     with st.spinner("Running..."):
         # SerpAPI search
@@ -40,9 +66,7 @@ if st.button("Get Answer") and question:
         }
         search = GoogleSearch(params)
         results = search.get_dict()
-        filtered_links = [
-            result["link"] for result in results.get("organic_results", [])
-        ]
+        filtered_links = [result["link"] for result in results.get("organic_results", [])]
 
         # Extract articles
         context = ""
@@ -63,9 +87,7 @@ if st.button("Get Answer") and question:
 
         # Generate Response with Gemini 1.5 Flash
         prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
-        response = client.models.generate_content(
-            model="gemini-1.5-flash", contents=prompt
-        )
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         answer = response.text.strip()
 
         # Follow-up Question
@@ -74,8 +96,9 @@ if st.button("Get Answer") and question:
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
 
-        final_response = client.models.generate_content(
-            model="gemini-1.5-flash", contents=final_prompt
-        )
-
-    st.write(final_response.text.replace("$", "\\$").replace("provided text", "available information"))
+        final_response = client.models.generate_content(model="gemini-1.5-flash", contents=final_prompt)
+        
+        response_text = final_response.text.replace("$", "\\$").replace("provided text", "available information")
+        st.session_state["chat_history"].append((question, response_text))
+        save_chat_history(st.session_state["chat_history"])
+        st.rerun()
