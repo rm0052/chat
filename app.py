@@ -52,10 +52,10 @@ def get_youtube_subtitles(video_url):
         return f"Error: {e}"
 
 # User Input
-question = st.text_area("Enter your question", height=100)
+question = st.chat_input("Enter your question", height=100)
 
 # Get Answer Button
-if st.button("Get Answer") and question:
+if question:
     with st.spinner("Running..."):
         # SerpAPI search
         params = {
