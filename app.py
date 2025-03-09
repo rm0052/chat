@@ -15,7 +15,7 @@ client = genai.Client(api_key="AIzaSyDFbnYmLQ1Q55jIYYmgQ83sxledB_MgTbw")
 st.title("Chatbot")
 
 # Chat history file
-CHAT_HISTORY_FILE = "chat_history.json"
+CHAT_HISTORY_FILE = "chat_history2.json"
 
 def load_chat_history():
     """Load the chat history dictionary from a file."""
