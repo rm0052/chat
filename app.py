@@ -104,7 +104,7 @@ if question:
 
         # Follow-up Question
         if answer.lower() == "yes":
-            final_prompt = f"Answer the question and provide some relevant links that are helpful in answering the question: {question}. Context: {context}. Links: {filtered_links}."
+            final_prompt = f'''Here are the links of news articles that have been published in the past few hours. Each article has a headline, the date/time it was published, and the article itself. The date appears right after the headline in the format 'day, date at time'. Use current time and date, for example, today is February 20th at 11:07 AM. Use the context to answer the question and respond with some of the links that are useful. Question: {question}. Context: {context}. Links: {links}.'''
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
 
