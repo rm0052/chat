@@ -104,7 +104,7 @@ if question:
 
         # Follow-up Question
         if answer.lower() == "yes":
-            final_prompt = f"Answer the question and provide some relevant links: {question}. Context: {context}"
+            final_prompt = f"Answer the question and provide some relevant links that are helpful in answering the question: {question}. Context: {context}. Links: {filtered_links}."
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
 
