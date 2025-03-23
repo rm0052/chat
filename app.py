@@ -1,5 +1,5 @@
 import streamlit as st
-from serpapi import GoogleSearch
+from googlesearch import GoogleSearch
 from bs4 import BeautifulSoup
 import requests
 import json
