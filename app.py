@@ -108,7 +108,7 @@ if question:
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
 
-        final_response = client.models.generate_content(model="gemini-2.0-flash" contents=final_prompt)
+        final_response = client.models.generate_content(model="gemini-2.0-flash", contents=final_prompt)
         
         response_text = final_response.text.replace("$", "\\$").replace("provided text", "available information")
         st.session_state["chat_history"].append((question, response_text))
