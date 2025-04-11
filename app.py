@@ -99,7 +99,7 @@ if question:
 
         # Generate Response with Gemini 1.5 Flash
         prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
-        response = client.models.generate_content(model="gemini-2.0-pro-experimental", contents=prompt)
+        response = client.models.generate_content(model="gemini-2.5-pro-experimental", contents=prompt)
         answer = response.text.strip()
 
         # Follow-up Question
@@ -108,7 +108,7 @@ if question:
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
 
-        final_response = client.models.generate_content(model="gemini-2.0-pro-experimental", contents=final_prompt)
+        final_response = client.models.generate_content(model="gemini-2.5-pro-experimental", contents=final_prompt)
         
         response_text = final_response.text.replace("$", "\\$").replace("provided text", "available information")
         st.session_state["chat_history"].append((question, response_text))
