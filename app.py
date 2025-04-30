@@ -48,7 +48,7 @@ st.session_state["chat_history"] = chat_histories[session_id]
 
 # Display Chat History
 st.write("## Chat History")
-for q, r in st.session_state["chat_history"]:
+for i,(q, r) in st.session_state["chat_history"]:
     with st.chat_message("user"):
         st.write(q)
     with st.chat_message("assistant"):
@@ -64,6 +64,8 @@ for q, r in st.session_state["chat_history"]:
             st.session_state["chat_history"][i] = (q, r + " [Feedback: 👎]")
             save_chat_history(chat_histories)
             st.rerun()
+    if st.session_state[feedback]:
+        st.write(f"Feedback: {st.session_state[feedback]}")
 def get_youtube_subtitles(video_url):
     """Fetch subtitles from a YouTube video."""
     video_id = video_url.split("v=")[-1]
