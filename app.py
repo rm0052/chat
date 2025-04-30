@@ -48,24 +48,11 @@ st.session_state["chat_history"] = chat_histories[session_id]
 
 # Display Chat History
 st.write("## Chat History")
-for i,(q, r) in st.session_state["chat_history"]:
+for i,q, rin st.session_state["chat_history"]:
     with st.chat_message("user"):
         st.write(q)
     with st.chat_message("assistant"):
         st.write(r)
-    col1, col2 = st.columns([1, 1])
-    with col1:
-        if st.button("👍", key=f"up_{i}"):
-            st.session_state["chat_history"][i] = (q, r + " [Feedback: 👍]")
-            save_chat_history(chat_histories)
-            st.rerun()
-    with col2:
-        if st.button("👎", key=f"down_{i}"):
-            st.session_state["chat_history"][i] = (q, r + " [Feedback: 👎]")
-            save_chat_history(chat_histories)
-            st.rerun()
-    if st.session_state[feedback]:
-        st.write(f"Feedback: {st.session_state[feedback]}")
 def get_youtube_subtitles(video_url):
     """Fetch subtitles from a YouTube video."""
     video_id = video_url.split("v=")[-1]
@@ -123,7 +110,7 @@ if question:
         final_response = client.models.generate_content(model="gemini-2.0-flash", contents=final_prompt)
         
         response_text = final_response.text.replace("$", "\\$").replace("provided text", "available information")
-        st.session_state["chat_history"].append({ "question": question, "response": response_text, "feedback": None })
+        st.session_state["chat_history"].append(question,response_text)
         # Update chat history dictionary
         chat_histories[session_id] = st.session_state["chat_history"]
         save_chat_history(chat_histories)
