@@ -110,7 +110,7 @@ if question:
         final_response = client.models.generate_content(model="gemini-2.0-flash", contents=final_prompt)
         
         response_text = final_response.text.replace("$", "\\$").replace("provided text", "available information")
-        st.session_state["chat_history"].append(question,response_text)
+        st.session_state["chat_history"].append((question,response_text))
         # Update chat history dictionary
         chat_histories[session_id] = st.session_state["chat_history"]
         save_chat_history(chat_histories)
