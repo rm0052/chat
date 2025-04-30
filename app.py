@@ -48,7 +48,7 @@ st.session_state["chat_history"] = chat_histories[session_id]
 
 # Display Chat History
 st.write("## Chat History")
-for i,q, rin st.session_state["chat_history"]:
+for q,r in st.session_state["chat_history"]:
     with st.chat_message("user"):
         st.write(q)
     with st.chat_message("assistant"):
