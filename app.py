@@ -53,17 +53,17 @@ for q, r in st.session_state["chat_history"]:
         st.write(q)
     with st.chat_message("assistant"):
         st.write(r)
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            if st.button("👍", key=f"up_{i}"):
-                st.session_state["chat_history"][i] = (q, r + " [Feedback: 👍]")
-                save_chat_history(chat_histories)
-                st.rerun()
-        with col2:
-            if st.button("👎", key=f"down_{i}"):
-                st.session_state["chat_history"][i] = (q, r + " [Feedback: 👎]")
-                save_chat_history(chat_histories)
-                st.rerun()
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        if st.button("👍", key=f"up_{i}"):
+            st.session_state["chat_history"][i] = (q, r + " [Feedback: 👍]")
+            save_chat_history(chat_histories)
+            st.rerun()
+    with col2:
+        if st.button("👎", key=f"down_{i}"):
+            st.session_state["chat_history"][i] = (q, r + " [Feedback: 👎]")
+            save_chat_history(chat_histories)
+            st.rerun()
 def get_youtube_subtitles(video_url):
     """Fetch subtitles from a YouTube video."""
     video_id = video_url.split("v=")[-1]
