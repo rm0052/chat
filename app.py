@@ -18,7 +18,6 @@ st.title("Chatbot")
 CHAT_HISTORY_FILE = "chat_history2.json"
 
 def load_chat_history():
-    """Load the chat history dictionary from a file."""
     if os.path.exists(CHAT_HISTORY_FILE):
         with open(CHAT_HISTORY_FILE, "r") as f:
             try:
@@ -28,33 +27,49 @@ def load_chat_history():
     return {}
 
 def save_chat_history(chat_histories):
-    """Save the chat history dictionary to a file."""
     with open(CHAT_HISTORY_FILE, "w") as f:
         json.dump(chat_histories, f)
 
-# Generate or retrieve a session ID
 if "session_id" not in st.session_state:
-    st.session_state["session_id"] = str(uuid.uuid4())  # Unique session ID
+    st.session_state["session_id"] = str(uuid.uuid4())
 
 session_id = st.session_state["session_id"]
 
-# Load chat history dictionary and retrieve session-specific history
+# Load chat histories from file
 chat_histories = load_chat_history()
+
+# Ensure session-specific history exists
 if session_id not in chat_histories:
     chat_histories[session_id] = []
 
-# Store chat history in session state
+# Sync with session state
 st.session_state["chat_history"] = chat_histories[session_id]
 
 # Display Chat History
 st.write("## Chat History")
-for q,r in st.session_state["chat_history"]:
+for i, chat in enumerate(st.session_state["chat_history"]):
     with st.chat_message("user"):
-        st.write(q)
+        st.write(chat["question"])
     with st.chat_message("assistant"):
-        st.write(r)
+        st.write(chat["response"])
+
+    # Feedback section
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        if st.button("👍", key=f"thumbs_up_{i}"):
+            chat["feedback"] = "👍"
+            save_chat_history(chat_histories)
+            st.rerun()
+    with col2:
+        if st.button("👎", key=f"thumbs_down_{i}"):
+            chat["feedback"] = "👎"
+            save_chat_history(chat_histories)
+            st.rerun()
+
+    if chat.get("feedback"):
+        st.write(f"Feedback: {chat['feedback']}")
+
 def get_youtube_subtitles(video_url):
-    """Fetch subtitles from a YouTube video."""
     video_id = video_url.split("v=")[-1]
     try:
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
@@ -68,7 +83,7 @@ question = st.chat_input("Type your question and press Enter...")
 
 if question:
     with st.spinner("Running..."):
-        # SerpAPI search
+        # Google Search via SerpAPI
         params = {
             "engine": "google",
             "q": question,
@@ -79,7 +94,7 @@ if question:
         results = search.get_dict()
         filtered_links = [result["link"] for result in results.get("organic_results", [])]
 
-        # Extract articles
+        # Scrape Articles
         context = ""
         for link in filtered_links:
             try:
@@ -96,22 +111,26 @@ if question:
             if len(context) >= 2000:
                 break
 
-        # Generate Response with Gemini 1.5 Flash
+        # Determine if context is useful
         prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
         response = client.models.generate_content(model="gemini-2.0-flash", contents=prompt)
         answer = response.text.strip()
 
-        # Follow-up Question
         if answer.lower() == "yes":
             final_prompt = f"Answer the question: {question}. Context: {context}"
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
 
         final_response = client.models.generate_content(model="gemini-2.0-flash", contents=final_prompt)
-        
         response_text = final_response.text.replace("$", "\\$").replace("provided text", "available information")
-        st.session_state["chat_history"].append((question,response_text))
-        # Update chat history dictionary
+
+        # Append to chat history (with feedback placeholder)
+        chat_entry = {
+            "question": question,
+            "response": response_text,
+            "feedback": None
+        }
+        st.session_state["chat_history"].append(chat_entry)
         chat_histories[session_id] = st.session_state["chat_history"]
         save_chat_history(chat_histories)
 
