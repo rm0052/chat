@@ -51,20 +51,20 @@ for i, chat in enumerate(st.session_state["chat_history"]):
     with st.chat_message("user"):
         st.write(chat["question"])
     with st.chat_message("assistant"):
-    st.write(chat["response"])
-    col1, col2 = st.columns([1, 1])
-    with col1:
-        if st.button("👍", key=f"thumbs_up_{i}"):
-            chat["feedback"] = "👍"
-            save_chat_history(chat_histories)
-            st.rerun()
-    with col2:
-        if st.button("👎", key=f"thumbs_down_{i}"):
-            chat["feedback"] = "👎"
-            save_chat_history(chat_histories)
-            st.rerun()
-    if chat.get("feedback"):
-        st.caption(f"Feedback: {chat['feedback']}")
+        st.write(chat["response"])
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            if st.button("👍", key=f"thumbs_up_{i}"):
+                chat["feedback"] = "👍"
+                save_chat_history(chat_histories)
+                st.rerun()
+        with col2:
+            if st.button("👎", key=f"thumbs_down_{i}"):
+                chat["feedback"] = "👎"
+                save_chat_history(chat_histories)
+                st.rerun()
+        if chat.get("feedback"):
+            st.caption(f"Feedback: {chat['feedback']}")
 
 def get_youtube_subtitles(video_url):
     video_id = video_url.split("v=")[-1]
