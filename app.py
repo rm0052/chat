@@ -38,6 +38,43 @@ session_id = st.session_state["session_id"]
 # Load chat histories from file
 chat_histories = load_chat_history()
 
+import streamlit as st
+import os
+
+EMAIL_FILE = "emails.txt"
+
+def is_email_in_file(email):
+    """Check if the email already exists in the file."""
+    if not os.path.exists(EMAIL_FILE):
+        return False
+    with open(EMAIL_FILE, "r") as f:
+        emails = f.read().splitlines()
+    return email in emails
+
+def save_email(email):
+    """Save the email to the file."""
+    with open(EMAIL_FILE, "a") as f:
+        f.write(email + "\n")
+
+# Only ask for email if not already captured
+if "email_verified" not in st.session_state:
+    st.session_state.email_verified = False
+
+if not st.session_state.email_verified:
+    st.title("🔐 Please enter your email to start chatting")
+    email = st.text_input("Enter your email:")
+
+    if email and "@" in email and "." in email:
+        if is_email_in_file(email):
+            st.success("✅ Welcome back! You're ready to chat.")
+        else:
+            save_email(email)
+            st.success("✅ Thanks for signing up! You're ready to chat.")
+        st.session_state.email_verified = True
+    else:
+        st.stop()  # Don't continue until valid email is provided
+
+
 # Ensure session-specific history exists
 if session_id not in chat_histories:
     chat_histories[session_id] = []
