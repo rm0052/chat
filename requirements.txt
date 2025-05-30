@@ -6,3 +6,4 @@ google-search-results
 google-genai
 httpx
 youtube-transcript-api
+streamlit-js-eval
