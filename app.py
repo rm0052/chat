@@ -59,8 +59,7 @@ if not user_id:
         save_email(email)
         # Store user_id in browser
         streamlit_js_eval(js_expressions=f"window.localStorage.setItem('user_id', '{email}')", key="set_user_id")
-        st.success("✅ You're all set! Reload to start chatting.")
-        st.stop()
+        st.rerun()
     else:
         st.warning("Please enter a valid email to start.")
         st.stop()
