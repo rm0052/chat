@@ -39,9 +39,6 @@ session_id = st.session_state["session_id"]
 # Load chat histories from file
 chat_histories = load_chat_history()
 
-import streamlit as st
-from streamlit_js_eval import streamlit_js_eval
-
 EMAIL_FILE = "emails.txt"
 
 def save_email(email):
@@ -66,8 +63,6 @@ if not user_id:
 else:
     st.success("✅ Welcome back!")
     # Proceed to chatbot
-
-
 
 # Ensure session-specific history exists
 if session_id not in chat_histories:
