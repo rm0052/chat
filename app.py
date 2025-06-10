@@ -42,13 +42,54 @@ chat_histories = load_chat_history()
 EMAIL_FILE = "emails.txt"
 
 def save_email(email):
-    with open(EMAIL_FILE, "a") as f:
-        f.write(email + "\n")
+    # Read existing emails
+    if os.path.exists(EMAIL_FILE):
+        with open(EMAIL_FILE, "r") as f:
+            saved_emails = set(line.strip().lower() for line in f.readlines())
+    else:
+        saved_emails = set()
 
+    # Save only if new
+    if email.lower() not in saved_emails:
+        with open(EMAIL_FILE, "a") as f:
+            f.write(email + "\n")
+
+# Secret code required to even see the admin panel
+SECRET_ADMIN_CODE = os.getenv("SECRET_ADMIN_CODE", "letmein")
+
+query_params = st.query_params
+admin_code = query_params.get("admin", None)
+def show_admin_panel():
+    st.title("🔐 Admin Panel")
+
+    if "admin_authenticated" not in st.session_state:
+        st.session_state["admin_authenticated"] = False
+
+    if not st.session_state["admin_authenticated"]:
+        password = st.text_input("Enter Admin Password", type="password")
+        if password == os.getenv("ADMIN_PASSWORD", "qwmnasfjfuifgf"):
+            st.session_state["admin_authenticated"] = True
+            st.rerun()
+        elif password:
+            st.error("Incorrect password.")
+        st.stop()
+
+    st.success("Welcome Admin!")
+    st.write("Here’s the protected content.")
+    # Add more admin logic here
+    if os.path.exists(EMAIL_FILE):
+        with open(EMAIL_FILE, "r") as f:
+            emails = f.readlines()
+        for email in reversed(emails[-50:]):
+            st.write(email.strip())
+    else:
+        st.info("No emails collected.")
 # Get user ID (unique per browser, stored in local storage)
 user_id = streamlit_js_eval(js_expressions="window.localStorage.getItem('user_id')", key="get_user_id")
 
 if not user_id:
+    if admin_code == SECRET_ADMIN_CODE:
+        show_admin_panel()
     # Ask for email only if user_id not found
     email = st.text_input("Enter your email to continue:")
 
