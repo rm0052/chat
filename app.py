@@ -39,7 +39,7 @@ session_id = st.session_state["session_id"]
 # Load chat histories from file
 chat_histories = load_chat_history()
 
-EMAIL_FILE = "emails.txt"
+EMAIL_LOG = "emails.json"
 
 def save_email(email):
     email = email.strip().lower()
