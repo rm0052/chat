@@ -42,17 +42,32 @@ chat_histories = load_chat_history()
 EMAIL_FILE = "emails.txt"
 
 def save_email(email):
-    # Read existing emails
-    if os.path.exists(EMAIL_FILE):
-        with open(EMAIL_FILE, "r") as f:
-            saved_emails = set(line.strip().lower() for line in f.readlines())
-    else:
-        saved_emails = set()
+    email = email.strip().lower()
+    now = datetime.utcnow().isoformat()
 
-    # Save only if new
-    if email.lower() not in saved_emails:
-        with open(EMAIL_FILE, "a") as f:
-            f.write(email + "\n")
+    # Load existing data
+    if os.path.exists(EMAIL_LOG):
+        with open(EMAIL_LOG, "r") as f:
+            try:
+                email_data = json.load(f)
+            except json.JSONDecodeError:
+                email_data = {}
+    else:
+        email_data = {}
+
+    # Update visit info
+    if email in email_data:
+        email_data[email]["last_visit"] = now
+        email_data[email]["num_visits"] += 1
+    else:
+        email_data[email] = {
+            "first_visit": now,
+            "last_visit": now,
+            "num_visits": 1
+        }
+    # Save back to file
+    with open(EMAIL_LOG, "w") as f:
+        json.dump(email_data, f, indent=2)
 
 # Secret code required to even see the admin panel
 SECRET_ADMIN_CODE = os.getenv("SECRET_ADMIN_CODE", "letmein")
@@ -76,12 +91,18 @@ def show_admin_panel():
 
     st.success("Welcome Admin!")
     st.write("Here’s the protected content.")
-    # Add more admin logic here
-    if os.path.exists(EMAIL_FILE):
-        with open(EMAIL_FILE, "r") as f:
-            emails = f.readlines()
-        for email in reversed(emails[-50:]):
-            st.write(email.strip())
+
+    # Display collected email data
+    if os.path.exists(EMAIL_LOG):
+        with open(EMAIL_LOG, "r") as f:
+            try:
+                email_data = json.load(f)
+            except json.JSONDecodeError:
+                st.error("Failed to parse email data.")
+                st.stop()
+
+        st.write("📬 **Collected Emails** (JSON Format)")
+        st.json(email_data)  # 👈 Display entire JSON structure
     else:
         st.info("No emails collected.")
 # Get user ID (unique per browser, stored in local storage)
@@ -90,9 +111,8 @@ user_id = streamlit_js_eval(js_expressions="window.localStorage.getItem('user_id
 if not user_id:
     if admin_code == SECRET_ADMIN_CODE:
         show_admin_panel()
-    # Ask for email only if user_id not found
     email = st.text_input("Enter your email to continue:")
-
+# Show admin panel ONLY if user_id is not set (i.e., user hasn't entered their email yet)
     if email and "@" in email:
         save_email(email)
         # Store user_id in browser
@@ -103,7 +123,16 @@ if not user_id:
         st.stop()
 else:
     st.success("✅ Welcome back!")
-    # Proceed to chatbot
+    # Show visit details
+    if os.path.exists(EMAIL_LOG):
+        with open(EMAIL_LOG, "r") as f:
+            try:
+                email_data = json.load(f)
+                if user_id in email_data:
+                    info = email_data[user_id]
+                    st.success(f"Number of visits: {info['num_visits']}")
+            except json.JSONDecodeError:
+                st.warning("Could not load visit data.")
 
 # Ensure session-specific history exists
 if session_id not in chat_histories:
