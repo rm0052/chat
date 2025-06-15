@@ -130,7 +130,6 @@ else:
                 email_data = json.load(f)
                 if user_id in email_data:
                     info = email_data[user_id]
-                    st.success(f"Number of visits: {info['num_visits']}")
             except json.JSONDecodeError:
                 st.warning("Could not load visit data.")
 
