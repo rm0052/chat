@@ -123,6 +123,12 @@ if not user_id:
         st.stop()
 else:
     st.success("✅ Welcome back!")
+    if os.path.exists(EMAIL_LOG):
+        with open(EMAIL_LOG, "r") as f:
+            try:
+                email_data = json.load(f)
+            except json.JSONDecodeError:
+                email_data = {}
     email_data[email]["num_visits"] += 1
 
 # Ensure session-specific history exists
