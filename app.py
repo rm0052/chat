@@ -123,7 +123,7 @@ if not user_id:
         st.stop()
 else:
     st.success("✅ Welcome back!")
-
+    email_data[email]["num_visits"] += 1
 
 # Ensure session-specific history exists
 if session_id not in chat_histories:
