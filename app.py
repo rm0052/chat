@@ -127,9 +127,10 @@ else:
         with open(EMAIL_LOG, "r") as f:
             try:
                 email_data = json.load(f)
+                if user_id in email_data:
+                    email_data[user_id]["num_visits"] += 1
             except json.JSONDecodeError:
-                email_data = {}
-    email_data[email]["num_visits"] += 1
+                st.warning("Could not load visit data.")
 
 # Ensure session-specific history exists
 if session_id not in chat_histories:
