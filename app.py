@@ -123,15 +123,7 @@ if not user_id:
         st.stop()
 else:
     st.success("✅ Welcome back!")
-    # Show visit details
-    if os.path.exists(EMAIL_LOG):
-        with open(EMAIL_LOG, "r") as f:
-            try:
-                email_data = json.load(f)
-                if user_id in email_data:
-                    info = email_data[user_id]
-            except json.JSONDecodeError:
-                st.warning("Could not load visit data.")
+
 
 # Ensure session-specific history exists
 if session_id not in chat_histories:
