@@ -172,7 +172,7 @@ def get_youtube_subtitles(video_url):
 
 # User Input
 question = st.chat_input("Type your question and press Enter...")
-
+st.write("Questions? Email hello@stockdoc.biz.")
 if question:
     with st.spinner("Running..."):
         # Google Search via SerpAPI
