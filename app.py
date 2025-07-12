@@ -18,6 +18,10 @@ st.title("Chatbot")
 # Chat history file
 CHAT_HISTORY_FILE = "chat_history2.json"
 
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 def load_chat_history():
     if os.path.exists(CHAT_HISTORY_FILE):
         with open(CHAT_HISTORY_FILE, "r") as f:
@@ -43,31 +47,22 @@ EMAIL_LOG = "emails.json"
 
 def save_email(email):
     email = email.strip().lower()
-    now = datetime.utcnow().isoformat()
+    now = datetime.now(timezone.utc).isoformat()
 
-    # Load existing data
-    if os.path.exists(EMAIL_LOG):
-        with open(EMAIL_LOG, "r") as f:
-            try:
-                email_data = json.load(f)
-            except json.JSONDecodeError:
-                email_data = {}
+    existing = supabase.table("emails_chat").select("*").eq("email", email).execute()
+    if existing.data:
+        user = existing.data[0]
+        supabase.table("emails_chat").update({
+            "last_visit": now,
+            "num_visits": user["num_visits"] + 1
+        }).eq("email", email).execute()
     else:
-        email_data = {}
-
-    # Update visit info
-    if email in email_data:
-        email_data[email]["last_visit"] = now
-        email_data[email]["num_visits"] += 1
-    else:
-        email_data[email] = {
+        supabase.table("emails_chat").insert([{
+            "email": email,
             "first_visit": now,
             "last_visit": now,
             "num_visits": 1
-        }
-    # Save back to file
-    with open(EMAIL_LOG, "w") as f:
-        json.dump(email_data, f, indent=2)
+        }]).execute()
 
 # Secret code required to even see the admin panel
 SECRET_ADMIN_CODE = os.getenv("SECRET_ADMIN_CODE", "letmein")
@@ -76,10 +71,8 @@ query_params = st.query_params
 admin_code = query_params.get("admin", None)
 def show_admin_panel():
     st.title("🔐 Admin Panel")
-
     if "admin_authenticated" not in st.session_state:
         st.session_state["admin_authenticated"] = False
-
     if not st.session_state["admin_authenticated"]:
         password = st.text_input("Enter Admin Password", type="password")
         if password == os.getenv("ADMIN_PASSWORD", "qwmnasfjfuifgf"):
@@ -88,24 +81,12 @@ def show_admin_panel():
         elif password:
             st.error("Incorrect password.")
         st.stop()
-
     st.success("Welcome Admin!")
-    st.write("Here’s the protected content.")
-
-    # Display collected email data
-    if os.path.exists(EMAIL_LOG):
-        with open(EMAIL_LOG, "r") as f:
-            try:
-                email_data = json.load(f)
-            except json.JSONDecodeError:
-                st.error("Failed to parse email data.")
-                st.stop()
-
-        st.write("📬 **Collected Emails** (JSON Format)")
-        st.json(email_data)  # 👈 Display entire JSON structure
+    response = supabase.table("emails_chat").select("*").execute()
+    if response.data:
+        st.json(response.data)
     else:
         st.info("No emails collected.")
-# Get user ID (unique per browser, stored in local storage)
 user_id = streamlit_js_eval(js_expressions="window.localStorage.getItem('user_id')", key="get_user_id")
 
 if not user_id:
@@ -123,14 +104,13 @@ if not user_id:
         st.stop()
 else:
     st.success("✅ Welcome back!")
-    if os.path.exists(EMAIL_LOG):
-        with open(EMAIL_LOG, "r") as f:
-            try:
-                email_data = json.load(f)
-            except json.JSONDecodeError:
-                st.warning("Could not load visit data.")
-    if user_id in email_data:
-        email_data[user_id]["num_visits"] += 1
+    user_email = st.session_state.get("get_user_id")
+    try:
+        response = supabase.table("emails").select("email").eq("email", user_email).execute()
+        if response.data:
+            save_email(user_email)
+    except Exception as e:
+        st.warning(f"Could not load visit data from Supabase: {e}")
 
 
 # Ensure session-specific history exists
