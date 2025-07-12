@@ -7,3 +7,4 @@ google-genai
 httpx
 youtube-transcript-api
 streamlit-js-eval
+supabase
