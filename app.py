@@ -21,7 +21,7 @@ CHAT_HISTORY_FILE = "chat_history2.json"
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def load_chat_history():
     if os.path.exists(CHAT_HISTORY_FILE):
