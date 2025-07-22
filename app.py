@@ -36,6 +36,27 @@ def save_chat_history(chat_histories):
     with open(CHAT_HISTORY_FILE, "w") as f:
         json.dump(chat_histories, f)
 
+def show_feedback():
+    CHAT_HISTORY_FILE = "chat_history2.json"
+    if os.path.exists(CHAT_HISTORY_FILE):
+        with open(CHAT_HISTORY_FILE, "r") as f:
+            try:
+                chat_histories = json.load(f)
+                st.write("### User Feedback")
+                for session_id, chats in chat_histories.items():
+                    for chat in chats:
+                        if chat.get("feedback"):
+                            st.markdown(f"""
+                            **Session ID**: `{session_id}`  
+                            **Question**: {chat['question']}  
+                            **Feedback**: {chat['feedback']}  
+                            ---
+                            """)
+            except json.JSONDecodeError:
+                st.error("Failed to load chat history.")
+    else:
+        st.info("No chat history found.")
+
 if "session_id" not in st.session_state:
     st.session_state["session_id"] = str(uuid.uuid4())
 
@@ -88,6 +109,8 @@ def show_admin_panel():
         st.json(response.data)
     else:
         st.info("No emails collected.")
+    st.write("### Collected Feedback")
+    show_feedback()
 user_id = streamlit_js_eval(js_expressions="window.localStorage.getItem('user_id')", key="get_user_id")
 
 if not user_id:
