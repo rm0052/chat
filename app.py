@@ -11,8 +11,8 @@ from streamlit_js_eval import streamlit_js_eval
 from supabase import create_client, Client
 from datetime import datetime, timedelta, timezone
 # Initialize Google GenAI client
-client = genai.Client(api_key="AIzaSyDFbnYmLQ1Q55jIYYmgQ83sxledB_MgTbw")
-
+genai.configure(api_key="YOUR_API_KEY")
+model = genai.GenerativeModel("gemini-2.0-flash")
 # Streamlit App
 st.title("Chatbot")
 
@@ -209,7 +209,7 @@ if question:
 
         # Determine if context is useful
         prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
-        response = client.models.generate_content(model="gemini-2.0-flash", contents=prompt)
+        response = response = model.generate_content(prompt)
         answer = response.text.strip()
 
         if answer.lower() == "yes":
@@ -231,3 +231,4 @@ if question:
         save_chat_history(chat_histories)
 
         st.rerun()
+
