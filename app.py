@@ -209,7 +209,7 @@ if question:
 
         # Determine if context is useful
         prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
-        response = response = model.generate_content(prompt)
+        response = model.generate_content(prompt)
         answer = response.text.strip()
 
         if answer.lower() == "yes":
@@ -231,6 +231,7 @@ if question:
         save_chat_history(chat_histories)
 
         st.rerun()
+
 
 
 
