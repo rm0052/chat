@@ -5,7 +5,7 @@ import requests
 import json
 import os
 import uuid
-from google import genai
+import google.generativeai as genai
 from youtube_transcript_api import YouTubeTranscriptApi
 from streamlit_js_eval import streamlit_js_eval
 from supabase import create_client, Client
@@ -231,6 +231,7 @@ if question:
         save_chat_history(chat_histories)
 
         st.rerun()
+
 
 
 
