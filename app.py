@@ -11,7 +11,7 @@ from streamlit_js_eval import streamlit_js_eval
 from supabase import create_client, Client
 from datetime import datetime, timedelta, timezone
 # Initialize Google GenAI client
-genai.configure("AIzaSyDFbnYmLQ1Q55jIYYmgQ83sxledB_MgTbw")
+genai.configure(api_key="AIzaSyDFbnYmLQ1Q55jIYYmgQ83sxledB_MgTbw")
 model = genai.GenerativeModel("gemini-2.0-flash")
 # Streamlit App
 st.title("Chatbot")
@@ -231,6 +231,7 @@ if question:
         save_chat_history(chat_histories)
 
         st.rerun()
+
 
 
 
