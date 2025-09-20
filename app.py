@@ -36,6 +36,10 @@ def save_chat_history(chat_histories):
     with open(CHAT_HISTORY_FILE, "w") as f:
         json.dump(chat_histories, f)
 
+@st.cache_data
+def generate_cached(prompt):
+    return model.generate_content(prompt)
+    
 def show_feedback():
     CHAT_HISTORY_FILE = "chat_history2.json"
     if os.path.exists(CHAT_HISTORY_FILE):
@@ -209,7 +213,7 @@ if question:
 
         # Determine if context is useful
         prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
-        response = model.generate_content(prompt)
+        response = generate_cached(prompt)
         answer = response.text.strip()
 
         if answer.lower() == "yes":
@@ -231,6 +235,7 @@ if question:
         save_chat_history(chat_histories)
 
         st.rerun()
+
 
 
 
