@@ -208,7 +208,7 @@ if question:
                     context += " " + article_text[:500]
             except:
                 continue
-            if len(context) >= 200:
+            if len(context) >= 2000:
                 break
 
         # Determine if context is useful
@@ -235,6 +235,7 @@ if question:
         save_chat_history(chat_histories)
 
         st.rerun()
+
 
 
 
