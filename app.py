@@ -220,7 +220,7 @@ if question:
         # Determine if context is useful
         prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
         genai.configure(api_key="AIzaSyAUGzXVbqKi0d6QL2NDkQd64ocfdleEpuE") 
-        model = genai.GenerativeModel("gemini-1.5-pro")
+        model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(prompt)
         answer = response.text.strip()
         if answer.lower() == "yes":
@@ -241,6 +241,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
