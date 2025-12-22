@@ -10,9 +10,6 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from streamlit_js_eval import streamlit_js_eval
 from supabase import create_client, Client
 from datetime import datetime, timedelta, timezone
-# Initialize Google GenAI client
-genai.configure(api_key="AIzaSyAUGzXVbqKi0d6QL2NDkQd64ocfdleEpuE")
-model = genai.GenerativeModel("gemini-2.0-flash-lite")
 # Streamlit App
 st.title("Chatbot")
 
@@ -56,6 +53,8 @@ def save_chat_history_cf(user_id, history):
 
 @st.cache_data
 def generate_cached(prompt):
+    genai.configure(api_key="AIzaSyAUGzXVbqKi0d6QL2NDkQd64ocfdleEpuE")
+    model = genai.GenerativeModel("gemini-2.0-flash-lite")
     return model.generate_content(prompt)
     
 def show_feedback():
@@ -249,6 +248,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
