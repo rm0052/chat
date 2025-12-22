@@ -134,8 +134,8 @@ user_id = streamlit_js_eval(js_expressions="window.localStorage.getItem('user_id
 if user_id:
     chat_histories = load_chat_history_cf(user_id)
 else:
-    chat_histories = []
-
+    chat_histories = {}
+    
 if not user_id:
     if admin_code == SECRET_ADMIN_CODE:
         show_admin_panel()
@@ -251,6 +251,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
