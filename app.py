@@ -181,7 +181,7 @@ for i, chat in enumerate(st.session_state["chat_history"]):
         with col2:
             if st.button("👎", key=f"thumbs_down_{i}"):
                 chat["feedback"] = "👎"
-                save_chat_history(chat_histories)
+                save_chat_history_cf(chat_histories)
                 st.rerun()
         if chat.get("feedback"):
             st.caption(f"Feedback: {chat['feedback']}")
@@ -247,10 +247,11 @@ if question:
             "response": response_text,
             "feedback": None
         }
-        st.session_state["chat_history"].append(chat_entry)
-        chat_histories[session_id] = st.session_state["chat_history"]
-
+        st.session_state["chat_history"].append(chat_entry) 
+        chat_histories[session_id] = st.session_state["chat_history"] 
+        save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
