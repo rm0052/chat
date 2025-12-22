@@ -135,6 +135,11 @@ if user_id:
     chat_histories = load_chat_history_cf(user_id)
 else:
     chat_histories = {}
+if session_id not in chat_histories:
+    chat_histories[session_id] = []
+
+# Sync to Streamlit
+st.session_state["chat_history"] = chat_histories[session_id]
     
 if not user_id:
     if admin_code == SECRET_ADMIN_CODE:
@@ -158,13 +163,6 @@ else:
             save_email(user_email)
     except Exception as e:
         st.warning(f"Could not load visit data from Supabase: {e}")
-
-
-# Ensure session-specific history exists
-if session_id not in chat_histories:
-    chat_histories[session_id] = []
-
-
 # Display Chat History
 st.write("## Chat History")
 for i, chat in enumerate(st.session_state["chat_history"]):
@@ -251,6 +249,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
