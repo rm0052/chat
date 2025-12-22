@@ -54,7 +54,7 @@ def save_chat_history_cf(user_id, history):
 @st.cache_data
 def generate_cached(prompt):
     genai.configure(api_key="AIzaSyAUGzXVbqKi0d6QL2NDkQd64ocfdleEpuE")
-    model = genai.GenerativeModel("gemini-2.0-flash-lite")
+    model = genai.GenerativeModel("gemini-1.5-pro")
     return model.generate_content(prompt)
     
 def show_feedback():
@@ -248,6 +248,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
