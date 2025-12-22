@@ -17,24 +17,41 @@ model = genai.GenerativeModel("gemini-2.0-flash-lite")
 st.title("Chatbot")
 
 # Chat history file
-CHAT_HISTORY_FILE = "chat_history2.json"
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+CLOUDFLARE_MEMORY_URL = os.getenv("CLOUDFLARE_MEMORY_URL")
+CLOUDFLARE_API_TOKEN = os.getenv("CLOUDFLARE_API_TOKEN")
 supabase: Client=create_client(SUPABASE_URL, SUPABASE_KEY)
 
-def load_chat_history():
-    if os.path.exists(CHAT_HISTORY_FILE):
-        with open(CHAT_HISTORY_FILE, "r") as f:
-            try:
-                return json.load(f)
-            except json.JSONDecodeError:
-                return {}
-    return {}
-
-def save_chat_history(chat_histories):
-    with open(CHAT_HISTORY_FILE, "w") as f:
-        json.dump(chat_histories, f)
+def load_chat_history_cf(user_id):
+    try:
+        r = requests.get(
+            CLOUDFLARE_MEMORY_URL,
+            params={"user_id": user_id},
+            headers={"Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}"},
+            timeout=10,
+        )
+        if r.status_code == 200 and r.text:
+            return json.loads(r.text)
+    except Exception as e:
+        st.warning(f"Cloudflare load failed: {e}")
+    return []
+    
+def save_chat_history_cf(user_id, history):
+    try:
+        requests.post(
+            CLOUDFLARE_MEMORY_URL,
+            params={"user_id": user_id},
+            headers={
+                "Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}",
+                "Content-Type": "application/json",
+            },
+            json=history,
+            timeout=10,
+        )
+    except Exception as e:
+        st.warning(f"Cloudflare save failed: {e}")
 
 @st.cache_data
 def generate_cached(prompt):
@@ -66,8 +83,6 @@ if "session_id" not in st.session_state:
 
 session_id = st.session_state["session_id"]
 
-# Load chat histories from file
-chat_histories = load_chat_history()
 
 EMAIL_LOG = "emails.json"
 
@@ -116,6 +131,10 @@ def show_admin_panel():
     st.write("### Collected Feedback")
     show_feedback()
 user_id = streamlit_js_eval(js_expressions="window.localStorage.getItem('user_id')", key="get_user_id")
+if user_id:
+    chat_histories = load_chat_history_cf(user_id)
+else:
+    chat_histories = []
 
 if not user_id:
     if admin_code == SECRET_ADMIN_CODE:
@@ -145,8 +164,6 @@ else:
 if session_id not in chat_histories:
     chat_histories[session_id] = []
 
-# Sync with session state
-st.session_state["chat_history"] = chat_histories[session_id]
 
 # Display Chat History
 st.write("## Chat History")
@@ -159,7 +176,7 @@ for i, chat in enumerate(st.session_state["chat_history"]):
         with col1:
             if st.button("👍", key=f"thumbs_up_{i}"):
                 chat["feedback"] = "👍"
-                save_chat_history(chat_histories)
+                save_chat_history_cf(user_id, st.session_state["chat_history"])
                 st.rerun()
         with col2:
             if st.button("👎", key=f"thumbs_down_{i}"):
@@ -232,9 +249,9 @@ if question:
         }
         st.session_state["chat_history"].append(chat_entry)
         chat_histories[session_id] = st.session_state["chat_history"]
-        save_chat_history(chat_histories)
 
         st.rerun()
+
 
 
 
