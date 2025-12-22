@@ -13,10 +13,6 @@ from datetime import datetime, timedelta, timezone
 # Streamlit App
 st.title("Chatbot")
 
-genai.configure(api_key="AIzaSyAUGzXVbqKi0d6QL2NDkQd64ocfdleEpuE")
-model = genai.GenerativeModel("gemini-1.5-pro")
-# Chat history file
-
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 CLOUDFLARE_MEMORY_URL = os.getenv("CLOUDFLARE_MEMORY_URL")
@@ -52,10 +48,6 @@ def save_chat_history_cf(user_id, history):
         )
     except Exception as e:
         st.warning(f"Cloudflare save failed: {e}")
-
-@st.cache_data
-def generate_cached(prompt):
-    return model.generate_content(prompt)
     
 def show_feedback():
     CHAT_HISTORY_FILE = "chat_history2.json"
@@ -227,15 +219,16 @@ if question:
 
         # Determine if context is useful
         prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
-        response = generate_cached(prompt)
+        genai.configure(api_key="AIzaSyAUGzXVbqKi0d6QL2NDkQd64ocfdleEpuE") 
+        model = genai.GenerativeModel("gemini-1.5-pro")
+        response = model.generate_content(prompt)
         answer = response.text.strip()
-
         if answer.lower() == "yes":
             final_prompt = f"Answer the question: {question}. Context: {context}"
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
 
-        final_response = generate_cached(final_prompt)
+        final_response = model.generate_content(final_prompt)
         response_text = final_response.text.replace("$", "\\$").replace("provided text", "available information")
 
         # Append to chat history (with feedback placeholder)
@@ -248,6 +241,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
