@@ -33,10 +33,11 @@ def load_chat_history_cf(user_id):
             timeout=10,
         )
         if r.status_code == 200 and r.text:
-            return json.loads(r.text)
+            data = json.loads(r.text)
+            return data if isinstance(data, dict) else {}
     except Exception as e:
         st.warning(f"Cloudflare load failed: {e}")
-    return []
+    return {}
     
 def save_chat_history_cf(user_id, history):
     try:
@@ -135,7 +136,8 @@ if user_id:
     chat_histories = load_chat_history_cf(user_id)
 else:
     chat_histories = {}
-
+if session_id not in chat_histories:
+    chat_histories[session_id] = []
 # Sync to Streamlit
 st.session_state["chat_history"] = chat_histories[session_id]
     
@@ -247,6 +249,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
