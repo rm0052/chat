@@ -227,7 +227,7 @@ if question:
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
 
-        final_response = model.generate_content(final_prompt)
+        final_response = client.models.generate_content(model="gemini-2.5-flash-lite", contents=final_prompt)
         response_text = final_response.text.replace("$", "\\$").replace("provided text", "available information")
 
         # Append to chat history (with feedback placeholder)
@@ -240,6 +240,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
