@@ -227,7 +227,7 @@ if question:
         st.session_state["chat_history"].append(chat_entry) 
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
-        st.rerun()
+
 
 
 
