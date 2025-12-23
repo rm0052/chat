@@ -5,11 +5,12 @@ import requests
 import json
 import os
 import uuid
-import google.generativeai as genai
+from groq import Groq
 from youtube_transcript_api import YouTubeTranscriptApi
 from streamlit_js_eval import streamlit_js_eval
 from supabase import create_client, Client
 from datetime import datetime, timedelta, timezone
+
 # Streamlit App
 st.title("Chatbot")
 
@@ -18,8 +19,19 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 CLOUDFLARE_MEMORY_URL = os.getenv("CLOUDFLARE_MEMORY_URL")
 CLOUDFLARE_API_TOKEN = os.getenv("CLOUDFLARE_API_TOKEN")
 supabase: Client=create_client(SUPABASE_URL, SUPABASE_KEY)
-genai.configure(api_key="AIzaSyBhiSGfyDvQWiMNNwUGQM7cadSFSKwqj_w")
-model = genai.GenerativeModel("gemini-1.5-flash-pro")
+groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+def groq_generate(prompt):
+    completion = groq_client.chat.completions.create(
+        model="llama-3.1-8b-instant",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3,
+        max_tokens=1024,
+    )
+    return completion.choices[0].message.content
 
 def load_chat_history_cf(user_id):
     try:
@@ -198,15 +210,14 @@ if question:
                 break
 
         # Determine if context is useful
-        prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
-        response = model.generate_content(prompt)
+        response=groq_generate( f"Answer only yes or no. Is this context useful?\n\nQuestion: {question}\nContext: {context}" )
         answer = response.text.strip()
         if answer.lower() == "yes":
             final_prompt = f"Answer the question: {question}. Context: {context}"
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
 
-        final_response = model.generate_content(final_prompt)
+        final_response = groq_generate(final_prompt)
         response_text = final_response.text.replace("$", "\\$").replace("provided text", "available information")
 
         # Append to chat history (with feedback placeholder)
@@ -219,6 +230,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
