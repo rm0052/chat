@@ -216,7 +216,8 @@ if question:
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
         response_text = groq_generate(final_prompt)
-        st.write(response_text)
+        with st.chat_message("assistant"): 
+            st.write(response_text)
         
         # Append to chat history (with feedback placeholder)
         chat_entry = {
@@ -227,6 +228,8 @@ if question:
         st.session_state["chat_history"].append(chat_entry) 
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
+        st.rerun()
+
 
 
 
