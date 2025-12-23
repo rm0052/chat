@@ -3,7 +3,7 @@ requests
 beautifulsoup4
 serpapi
 google-search-results
-google-genai>=0.3.0
+google-generativeai
 httpx
 youtube-transcript-api
 streamlit-js-eval
