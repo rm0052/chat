@@ -51,27 +51,6 @@ def save_chat_history_cf(user_id, history):
     except Exception as e:
         st.warning(f"Cloudflare save failed: {e}")
     
-def show_feedback():
-    CHAT_HISTORY_FILE = "chat_history2.json"
-    if os.path.exists(CHAT_HISTORY_FILE):
-        with open(CHAT_HISTORY_FILE, "r") as f:
-            try:
-                chat_histories = json.load(f)
-                st.write("### User Feedback")
-                for session_id, chats in chat_histories.items():
-                    for chat in chats:
-                        if chat.get("feedback"):
-                            st.markdown(f"""
-                            **Session ID**: `{session_id}`  
-                            **Question**: {chat['question']}  
-                            **Feedback**: {chat['feedback']}  
-                            ---
-                            """)
-            except json.JSONDecodeError:
-                st.error("Failed to load chat history.")
-    else:
-        st.info("No chat history found.")
-
 if "session_id" not in st.session_state:
     st.session_state["session_id"] = str(uuid.uuid4())
 
@@ -122,8 +101,7 @@ def show_admin_panel():
         st.json(response.data)
     else:
         st.info("No emails collected.")
-    st.write("### Collected Feedback")
-    show_feedback()
+
 user_id = streamlit_js_eval(js_expressions="window.localStorage.getItem('user_id')", key="get_user_id")
 if user_id:
     chat_histories = load_chat_history_cf(user_id)
@@ -172,7 +150,7 @@ for i, chat in enumerate(st.session_state["chat_history"]):
         with col2:
             if st.button("👎", key=f"thumbs_down_{i}"):
                 chat["feedback"] = "👎"
-                save_chat_history_cf(chat_histories)
+                save_chat_history_cf(user_id, st.session_state["chat_history"])
                 st.rerun()
         if chat.get("feedback"):
             st.caption(f"Feedback: {chat['feedback']}")
@@ -241,6 +219,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
