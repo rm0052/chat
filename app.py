@@ -62,7 +62,9 @@ def save_chat_history_cf(user_id, history):
         )
     except Exception as e:
         st.warning(f"Cloudflare save failed: {e}")
-    
+
+if "last_response" not in st.session_state:
+    st.session_state.last_response = None
 if "session_id" not in st.session_state:
     st.session_state["session_id"] = str(uuid.uuid4())
 
@@ -159,7 +161,7 @@ def get_youtube_subtitles(video_url):
 # User Input
 question = st.chat_input("Type your question and press Enter...")
 st.write("Questions or feedback? Email hello@stockdoc.biz.")
-if question:
+if question and question != st.session_state.get("last_question"):
     with st.spinner("Running..."):
         # Google Search via SerpAPI
         params = {
@@ -196,21 +198,21 @@ if question:
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
         response_text = groq_generate(final_prompt)
-        with st.chat_message("user"):
-            st.write(question)
+        st.session_state.last_question = question 
+        st.session_state.last_response = response_text
         with st.chat_message("assistant"): 
-            st.write(response_text)
-            col1, col2 = st.columns([1, 1]) 
+            st.write(st.session_state.last_response)
+            col1, col2 = st.columns(2) 
+            def thumbs_up(): 
+                st.session_state["chat_history"][-1]["feedback"] = "👍" 
+                save_chat_history_cf(user_id, chat_histories)
+            def thumbs_down(): 
+                st.session_state["chat_history"][-1]["feedback"] = "👎" 
+                save_chat_history_cf(user_id, chat_histories)
             with col1: 
-                if st.button("👍", key=f"thumbs_up_new"): 
-                    chat_entry["feedback"] = "👍" 
-                    save_chat_history_cf(user_id, st.session_state["chat_history"])
-                    st.toast("Feedback saved")
+                st.button("👍", on_click=thumbs_up, key="thumbs_up")
             with col2: 
-                if st.button("👎", key=f"thumbs_down_new"): 
-                    chat_entry["feedback"] = "👎"
-                    save_chat_history_cf(user_id, st.session_state["chat_history"])
-                    st.toast("Feedback saved")
+                st.button("👎", on_click=thumbs_down, key="thumbs_down")
         # Append to chat history (with feedback placeholder)
         chat_entry = {
             "question": question,
@@ -220,6 +222,7 @@ if question:
         st.session_state["chat_history"].append(chat_entry) 
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
+
 
 
 
