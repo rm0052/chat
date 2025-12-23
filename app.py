@@ -146,26 +146,6 @@ else:
             save_email(user_email)
     except Exception as e:
         st.warning(f"Could not load visit data from Supabase: {e}")
-# Display Chat History
-st.write("## Chat History")
-for i, chat in enumerate(st.session_state["chat_history"]):
-    with st.chat_message("user"):
-        st.write(chat["question"])
-    with st.chat_message("assistant"):
-        st.write(chat["response"])
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            if st.button("👍", key=f"thumbs_up_{i}"):
-                chat["feedback"] = "👍"
-                save_chat_history_cf(user_id, st.session_state["chat_history"])
-                st.rerun()
-        with col2:
-            if st.button("👎", key=f"thumbs_down_{i}"):
-                chat["feedback"] = "👎"
-                save_chat_history_cf(user_id, st.session_state["chat_history"])
-                st.rerun()
-        if chat.get("feedback"):
-            st.caption(f"Feedback: {chat['feedback']}")
 
 def get_youtube_subtitles(video_url):
     video_id = video_url.split("v=")[-1]
@@ -225,12 +205,10 @@ if question:
                 if st.button("👍", key=f"thumbs_up_new"): 
                     chat_entry["feedback"] = "👍" 
                     save_chat_history_cf(user_id, st.session_state["chat_history"])
-                    st.rerun()
             with col2: 
                 if st.button("👎", key=f"thumbs_down_new"): 
                     chat_entry["feedback"] = "👎"
                     save_chat_history_cf(user_id, st.session_state["chat_history"])
-                    st.rerun()
         
         # Append to chat history (with feedback placeholder)
         chat_entry = {
@@ -241,6 +219,7 @@ if question:
         st.session_state["chat_history"].append(chat_entry) 
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
+
 
 
 
