@@ -3,9 +3,8 @@ requests
 beautifulsoup4
 serpapi
 google-search-results
-google-generativeai
+google-genai
 httpx
 youtube-transcript-api
 streamlit-js-eval
 supabase
-google
