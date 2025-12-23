@@ -205,10 +205,8 @@ if question and question != st.session_state.get("last_question"):
             col1, col2 = st.columns(2) 
             def thumbs_up(): 
                 st.session_state["chat_history"][-1]["feedback"] = "👍" 
-                save_chat_history_cf(user_id, chat_histories)
             def thumbs_down(): 
                 st.session_state["chat_history"][-1]["feedback"] = "👎" 
-                save_chat_history_cf(user_id, chat_histories)
             with col1: 
                 st.button("👍", on_click=thumbs_up, key="thumbs_up")
             with col2: 
@@ -217,11 +215,12 @@ if question and question != st.session_state.get("last_question"):
         chat_entry = {
             "question": question,
             "response": response_text,
-            "feedback": None
+            "feedback": st.session_state["chat_history"][-1]["feedback"]
         }
         st.session_state["chat_history"].append(chat_entry) 
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
+
 
 
 
