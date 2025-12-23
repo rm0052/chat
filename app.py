@@ -205,12 +205,12 @@ if question:
                 if st.button("👍", key=f"thumbs_up_new"): 
                     chat_entry["feedback"] = "👍" 
                     save_chat_history_cf(user_id, st.session_state["chat_history"])
+                    st.toast("Feedback saved")
             with col2: 
                 if st.button("👎", key=f"thumbs_down_new"): 
                     chat_entry["feedback"] = "👎"
                     save_chat_history_cf(user_id, st.session_state["chat_history"])
-        if chat.get("feedback"): 
-            st.caption(f"Feedback: {chat['feedback']}")
+                    st.toast("Feedback saved")
         # Append to chat history (with feedback placeholder)
         chat_entry = {
             "question": question,
@@ -220,6 +220,7 @@ if question:
         st.session_state["chat_history"].append(chat_entry) 
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
+
 
 
 
