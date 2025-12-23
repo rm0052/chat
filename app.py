@@ -216,15 +216,21 @@ if question:
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
         response_text = groq_generate(final_prompt)
+        with st.chat_message("user"):
+            st.write(question)
         with st.chat_message("assistant"): 
             st.write(response_text)
             col1, col2 = st.columns([1, 1]) 
             with col1: 
                 if st.button("👍", key=f"thumbs_up_new"): 
                     chat_entry["feedback"] = "👍" 
+                    save_chat_history_cf(user_id, st.session_state["chat_history"])
+                    st.rerun()
             with col2: 
                 if st.button("👎", key=f"thumbs_down_new"): 
                     chat_entry["feedback"] = "👎"
+                    save_chat_history_cf(user_id, st.session_state["chat_history"])
+                    st.rerun()
         
         # Append to chat history (with feedback placeholder)
         chat_entry = {
@@ -235,6 +241,7 @@ if question:
         st.session_state["chat_history"].append(chat_entry) 
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
+
 
 
 
