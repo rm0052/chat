@@ -215,7 +215,7 @@ if question:
             final_prompt = f"Answer the question: {question}. Context: {context}"
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
-        final_response = groq_generate(final_prompt)
+        response_text = groq_generate(final_prompt)
         
         # Append to chat history (with feedback placeholder)
         chat_entry = {
@@ -227,6 +227,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
