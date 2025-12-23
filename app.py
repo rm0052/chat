@@ -5,7 +5,7 @@ import requests
 import json
 import os
 import uuid
-import google.generativeai as genai
+from google import genai
 from youtube_transcript_api import YouTubeTranscriptApi
 from streamlit_js_eval import streamlit_js_eval
 from supabase import create_client, Client
@@ -219,9 +219,8 @@ if question:
 
         # Determine if context is useful
         prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
-        genai.configure(api_key="AIzaSyAUGzXVbqKi0d6QL2NDkQd64ocfdleEpuE") 
-        model = genai.GenerativeModel("models/gemini-1.5-flash")
-        response = model.generate_content(prompt)
+        client = genai.Client(api_key="AIzaSyAUGzXVbqKi0d6QL2NDkQd64ocfdleEpuE")
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt )
         answer = response.text.strip()
         if answer.lower() == "yes":
             final_prompt = f"Answer the question: {question}. Context: {context}"
@@ -241,6 +240,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
