@@ -210,13 +210,11 @@ if question:
                 break
 
         # Determine if context is useful
-        response=groq_generate( f"Answer only yes or no. Is this context useful?\n\nQuestion: {question}\nContext: {context}" )
-        answer = response.text.strip()
+        answer=groq_generate( f"Answer only yes or no. Is this context useful?\n\nQuestion: {question}\nContext: {context}" )
         if answer.lower() == "yes":
             final_prompt = f"Answer the question: {question}. Context: {context}"
         else:
             final_prompt = f"Answer the question using your own knowledge: {question}."
-
         final_response = groq_generate(final_prompt)
         response_text = final_response.text.replace("$", "\\$").replace("provided text", "available information")
 
@@ -230,6 +228,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
