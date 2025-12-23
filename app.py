@@ -19,7 +19,7 @@ CLOUDFLARE_MEMORY_URL = os.getenv("CLOUDFLARE_MEMORY_URL")
 CLOUDFLARE_API_TOKEN = os.getenv("CLOUDFLARE_API_TOKEN")
 supabase: Client=create_client(SUPABASE_URL, SUPABASE_KEY)
 genai.configure(api_key="AIzaSyBhiSGfyDvQWiMNNwUGQM7cadSFSKwqj_w")
-model = genai.GenerativeModel("gemini-1.5-flash-latest")
+model = genai.GenerativeModel("gemini-1.5-flash-pro")
 
 def load_chat_history_cf(user_id):
     try:
@@ -241,6 +241,7 @@ if question:
         chat_histories[session_id] = st.session_state["chat_history"] 
         save_chat_history_cf(user_id, chat_histories)
         st.rerun()
+
 
 
 
