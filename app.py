@@ -423,10 +423,16 @@ if question and question != st.session_state.get("last_question"):
             if len(context) >= 2000:
                 break
                 
-        final_prompt = f"Answer the question: {question}. Context: {context}"
-        
-        # Generate response using RLHF-enhanced model with feedback history
-        response_text = groq_generate(final_prompt, st.session_state["chat_history"])
+        prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
+        response = groq_generate(prompt)
+        answer = response.strip()
+        if answer.lower() == "yes":
+            final_prompt = f"Answer the question: {question}. Context: {context}"
+        else:
+            final_prompt = f"Answer the question using your own knowledge: {question}."
+
+        final_response = groq_generate(final_prompt)
+        response_text = final_response.replace("$", "\\$").replace("provided text", "available information")
         
         # Log that RLHF was applied (for debugging)
         st.session_state["rlhf_applied"] = any(entry.get("feedback") for entry in st.session_state["chat_history"])
@@ -542,3 +548,4 @@ if question and question != st.session_state.get("last_question"):
         # Save to Cloudflare
         chat_histories[session_id] = st.session_state["chat_history"]
         save_chat_history_cf(user_id, chat_histories)
+
