@@ -14,7 +14,56 @@ from datetime import datetime, timedelta, timezone
 
 # Streamlit App
 st.title("Chatbot")
+st.write('''This chatbot will help you with answers to what influencers, wall street analysts and industry leaders think of specific stocks, companies and industries. 
 
+Here are some examples:
+
+What is Tom Lee saying about bitcoin?
+What is Bank of America's outlook on Tesla?
+What is Jim Cramer's outlook on quantum computing stocks?
+What is Dan Ives' view on AI stocks?
+What did Elon Musk say about Tesla’s Optimus robot?
+What is the analyst rating on Nvidia?
+What is Cathy Wood's outlook on Palantir?
+What is the analyst outlook on Amazon?
+Did Google beat expectations on their most recent earnings report?
+
+
+Major Influencers & Analysts:
+
+
+Jim Cramer, Host of CNBC’s Mad Money
+Tom Lee, Co-founder and Head of Research, Funstrat
+Mark Lipacis, Sr. Managing Director, Evercore
+Elon Musk, CEO of Tesla
+Jensen Huang, CEO of Nvidia
+Cathy Wood, Chief Investment Office, ARK Invest
+Mark Zuckerberg, CEO of Facebook
+Dan Ives, Managing Director, Wedbush
+Warren Buffett, CEO, Berkshire Hathaway
+Aswath Damodaran, Professor, NYU Stern School
+Goldman Sachs
+Bank of America
+JPMorgan
+Wells Fargo
+Morgan Stanley
+Citigroup
+UBS
+
+
+Carl Icahn
+Matt Levine
+Eddy Elfenbein 
+Joe Weisenthal (@TheStalwart) and Tracy Alloway
+Bill Brewster
+Citrini 
+Rod Alzmann
+Meb Faber
+Eric Balchunas
+Michael Green
+Lauren Balik
+'''
+        )
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 CLOUDFLARE_MEMORY_URL = os.getenv("CLOUDFLARE_MEMORY_URL")
