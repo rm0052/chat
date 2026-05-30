@@ -41,21 +41,37 @@ Major Influencers & Analysts:
 
 
 Jim Cramer, Host of CNBC’s Mad Money
+
 Tom Lee, Co-founder and Head of Research, Funstrat
+
 Mark Lipacis, Sr. Managing Director, Evercore
+
 Elon Musk, CEO of Tesla
+
 Jensen Huang, CEO of Nvidia
+
 Cathy Wood, Chief Investment Office, ARK Invest
+
 Mark Zuckerberg, CEO of Facebook
+
 Dan Ives, Managing Director, Wedbush
+
 Warren Buffett, CEO, Berkshire Hathaway
+
 Aswath Damodaran, Professor, NYU Stern School
+
 Goldman Sachs
+
 Bank of America
+
 JPMorgan
+
 Wells Fargo
+
 Morgan Stanley
+
 Citigroup
+
 UBS
 '''
         )
