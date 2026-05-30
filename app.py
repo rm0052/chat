@@ -85,7 +85,7 @@ groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def groq_generate(prompt, chat_history=None):
     """Generate response using Groq with RLHF improvements if available"""
-    system_message = "You are a helpful assistant."
+    system_message = "You are a search-grounded assistant. Use only the provided Search Context. Do not use prior knowledge. If Search Context does not answer the question, say you cannot determine it from the provided sources. Cite sources like [1], [2]. USER: Question: {question} Search Context: [1] Title: ... URL: ... Snippet/Text: ... [2] Title: ... URL: ... Snippet/Text: ..."
     
     # Extract specific examples and patterns from feedback history
     rlhf_examples = []
