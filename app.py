@@ -482,15 +482,7 @@ if question and question != st.session_state.get("last_question"):
                 continue
             if len(context) >= 2000:
                 break
-                
-        prompt = f"Answer only yes or no if the context is useful in answering the question: {question}. Context: {context}"
-        response = groq_generate(prompt)
-        answer = response.strip()
-        if answer.lower() == "yes":
-            final_prompt = f"Answer the question: {question}. Context: {context}"
-        else:
-            final_prompt = f"Answer the question using your own knowledge: {question}."
-
+        final_prompt = f"Answer the question: {question}. Context: {context}"
         final_response = groq_generate(final_prompt)
         response_text = final_response.replace("$", "\\$").replace("provided text", "available information")
         
