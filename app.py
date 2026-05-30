@@ -19,13 +19,21 @@ st.write('''This chatbot will help you with answers to what influencers, wall st
 Here are some examples:
 
 What is Tom Lee saying about bitcoin?
+
 What is Bank of America's outlook on Tesla?
+
 What is Jim Cramer's outlook on quantum computing stocks?
+
 What is Dan Ives' view on AI stocks?
+
 What did Elon Musk say about Tesla’s Optimus robot?
+
 What is the analyst rating on Nvidia?
+
 What is Cathy Wood's outlook on Palantir?
+
 What is the analyst outlook on Amazon?
+
 Did Google beat expectations on their most recent earnings report?
 
 
@@ -49,19 +57,6 @@ Wells Fargo
 Morgan Stanley
 Citigroup
 UBS
-
-
-Carl Icahn
-Matt Levine
-Eddy Elfenbein 
-Joe Weisenthal (@TheStalwart) and Tracy Alloway
-Bill Brewster
-Citrini 
-Rod Alzmann
-Meb Faber
-Eric Balchunas
-Michael Green
-Lauren Balik
 '''
         )
 SUPABASE_URL = os.getenv("SUPABASE_URL")
