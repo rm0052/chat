@@ -444,7 +444,7 @@ for i, message in enumerate(st.session_state["chat_history"]):
 
 # User Input
 question = st.chat_input("Type your question and press Enter...")
-st.write("Questions or feedback? Email hello@stockdoc.biz.")
+st.write("Questions or feedback? Email rohan.mani50@gmail.com.")
 
 if question and question != st.session_state.get("last_question"):
     # Display user question
