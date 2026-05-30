@@ -7,7 +7,6 @@ import os
 import uuid
 import html
 from groq import Groq
-from youtube_transcript_api import YouTubeTranscriptApi
 from streamlit_js_eval import streamlit_js_eval
 from supabase import create_client, Client
 from datetime import datetime, timedelta, timezone
@@ -470,14 +469,12 @@ if question and question != st.session_state.get("last_question"):
         context = ""
         for link in filtered_links:
             try:
-                if "youtube.com" in link:
-                    context += " " + get_youtube_subtitles(link)[:500]
-                else:
-                    response = requests.get(link, timeout=10)
-                    soup = BeautifulSoup(response.text, "html.parser")
-                    paragraphs = soup.find_all("p")
-                    article_text = "\n".join(p.get_text(strip=True) for p in paragraphs)
-                    context += " " + article_text[:500]
+                context += " " + get_youtube_subtitles(link)[:500]
+                response = requests.get(link, timeout=10)
+                soup = BeautifulSoup(response.text, "html.parser")
+                paragraphs = soup.find_all("p")
+                article_text = "\n".join(p.get_text(strip=True) for p in paragraphs)
+                context += " " + article_text[:500]
             except Exception as e:
                 continue
             if len(context) >= 2000:
